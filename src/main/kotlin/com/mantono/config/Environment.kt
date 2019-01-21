@@ -1,7 +1,5 @@
 package com.mantono.config
 
-import java.io.File
-
 enum class Environment {
 	PRODUCTION,
 	DEVELOPMENT,
