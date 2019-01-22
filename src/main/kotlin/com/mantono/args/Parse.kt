@@ -6,7 +6,17 @@ fun parseArgs(
     args: Array<String>,
     options: Collection<Flag>,
     ignoreUnknown: Boolean = false
-): CommandLineArguments = parseArgs(LinkedList(args.toList()), options, ignoreUnknown)
+): CommandLineArguments {
+    val defaults: Map<String, Any> = options.filter { it is ValueFlag<*> }
+        .map { it as ValueFlag<*> }
+        .map { it.longFlag to it.defaultValue }
+        .toMap()
+    val defaultBooleans: Map<String, Boolean> = options.filter { it !is ValueFlag<*> }
+        .map { it.longFlag to false }
+        .toMap()
+    val parsed: CommandLineArguments = parseArgs(LinkedList(args.toList()), options, ignoreUnknown)
+    return parsed.copy(flags = defaults + defaultBooleans + parsed.flags)
+}
 
 private tailrec fun parseArgs(
     args: Deque<String>,

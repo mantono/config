@@ -11,7 +11,9 @@ class ParseArgsTest {
         flag<String>('f', "foo", "aaa", "Foo foo", parser = String::toString),
         flag<String>('b', "bar", "bbb", "Bar bar", parser = String::toString),
         flag<Long>('l', "limit", 67L, "Buzz", parser = String::toLong),
-        flag('d', "bool", "Bii Bii")
+        flag('d', "bool", "Bii Bii"),
+        flag<Float>('x', "fizz", 3.10f, "Float flag with default value", parser = String::toFloat),
+        flag('z', "buzz")
     )
 
     @Test
@@ -24,6 +26,8 @@ class ParseArgsTest {
             assertEquals("bob", get("bar"))
             assertEquals(20L, get("limit"))
             assertEquals(true, get("bool"))
+            assertEquals(3.10f, get("fizz"))
+            assertEquals(false, get("buzz"))
         }
 
         assertTrue("1" in cli.args)
