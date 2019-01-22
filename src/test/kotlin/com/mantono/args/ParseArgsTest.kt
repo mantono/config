@@ -1,33 +1,28 @@
 package com.mantono.args
 
+import com.mantono.args.implementations.flag
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class ParseArgsTest {
 
-    private enum class Options(
-        override val defaultValue: String,
-        override val shortFlag: Char,
-        override val longFlag: String,
-        override val description: String,
-        override val takesArgument: Boolean
-    ): ProgramOption {
-        Foo("x", 'f', "foo", "Foo foo", true),
-        Bar("x", 'b', "bar", "Bar bar", true),
-        Dee("x", 'd', "dee", "Dee dee", true),
-        Bool("x", 't', "bool", "Bii Bii", false);
-    }
+    private val flags: List<Flag> = listOf(
+        flag<String>('f', "foo", "aaa", "Foo foo", parser = String::toString),
+        flag<String>('b', "bar", "bbb", "Bar bar", parser = String::toString),
+        flag<Long>('l', "limit", 67L, "Buzz", parser = String::toLong),
+        flag('d', "bool", "Bii Bii")
+    )
 
     @Test
     fun testParseArgs() {
-        val args = arrayOf("1", "2", "3", "--foo", "alice", "-t", "--bool", "--bar", "bob", "-d", "20")
-        val cli: CommandLineArguments = parseArgs(args, Options.values().toList(), false)
+        val args = arrayOf("1", "2", "3", "--foo", "alice", "--bool", "--bar", "bob", "-l", "20")
+        val cli: CommandLineArguments = parseArgs(args, flags, false)
 
         cli.flags.apply {
             assertEquals("alice", get("foo"))
             assertEquals("bob", get("bar"))
-            assertEquals("20", get("dee"))
+            assertEquals(20L, get("limit"))
             assertEquals(true, get("bool"))
         }
 
